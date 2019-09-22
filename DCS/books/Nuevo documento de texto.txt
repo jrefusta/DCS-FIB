@@ -1,0 +1,97 @@
+
+
+
+polar to parametric
+Example (I):
+
+r = 2*? 
+
+Then ? = r/2 and let ? = t. 
+
+x = r * cos t
+x = 2 * t * cos(r/2)
+x = 2 * t * cos((2*t)/2)
+x = 2 * t * cos t
+
+Similarly,
+
+y = r * sin t
+y = 2 * t * sin(r/2)
+y = 2 * t * sin t
+
+To summarize:
+r = 2*? 
+
+is equivalent to
+
+x = 2 * t * cos t
+y = 2 * t * sin t
+;
+Example (II):
+
+r = e^(2 * ?)
+
+Then ? = 1/2 * ln r and let ? = t. 
+
+And...
+
+x = r * cos t
+x = e^(2*t) * cos(1/2 * ln r)
+x = e^(2*t) * cos(1/2 * ln(e^(2*t)))
+x = e^(2*t) * cos(1/2 * 2 * t)
+x = e^(2*t) * cos t
+
+y = r * sin t
+y = e^(2*t) * sin(1/2 * ln r)
+y = e^(2*t) * sin(1/2 * ln(e^(2*t)))
+y = e^(2*t) * sin t
+
+
+
+To summarize:
+r = e^(2*?)
+
+is equivalent to:
+
+x = e^(2*t) * cos t
+y = e^(2*t) * sin t
+------------
+cartesian equation to parametric eq
+Example 1:
+
+Find a set of parametric equations for the equation y=x2+5 .
+
+Solution:
+
+Assign any one of the variable equal to t . (say x = t ).
+
+Then, the given equation can be rewritten as y=t2+5 .
+
+Therefore, a set of parametric equations is x = t and y=t2+5 .
+
+Example 2:
+
+Eliminate the parameter and find the corresponding rectangular equation.
+
+x=t+5y=t2
+
+Solution:
+
+Rewrite the equation x=t+5 as t in terms of x .
+
+t+5=x??????t=x-5
+
+Now, replace t by ( x-5 ) in the equation y=t2 .
+
+y=(x-5)2
+
+Therefore, the corresponding rectangular equation is y=(x-5)2 .
+
+----------
+TORUS (donut)
+x = cos(t)*(R+r*cos(u))
+y = sin(t)*(R+r*cos(u))
+z = r*sin(u)
+
+t, u [0,2pi]
+----------

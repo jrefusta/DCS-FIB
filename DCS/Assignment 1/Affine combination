@@ -1,0 +1,8 @@
+An affine combination is
+P = aQ+(1-a)R;
+
+to preserve, 
+f(P) = a f(Q) + (1-a) f(R)
+
+
+A parallel projection preserves affine combinations because we can find the points (a,b) parallel projected by multiplying the matrix of our points by a Matrix Transformation

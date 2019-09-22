@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>DCS - 2.2</title>
+
+    <!--- Math.js library, for matrix manipulation, and many other things--->
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js></script>
+</head>
+
+<body>
+
+<h1>DCS - 2.2 Properties of conics</h1>
+
+<canvas id="canvas1" height="600" width="600" class="bezier"  style="border:1px solid #d3d3d3;"></canvas>
+<br>
+<button type="button" onclick="doReset()">Reset</button>
+<button type="button" onclick="CalculateReflection()">Draw a vertical ray at</button>
+<input type="text" id="X" name="X" placeholder="x =" required>
+<h1>I can found the Focus point of the parabola, being the equation of the parabola y = a(x - h)^2 + k, where (h,k) are the coordinates of the vertex of the parabola (in this case, the origin, (0,0)), the focus point will be  (h, k + 1/(4a)). But I want to prove it.
+    <h1>First of all, I calculate the point P of the vertical ray that hits in the Parabola, then I calculate the tangent line that goes through that point P of the Parabola to find out the intersection point between that tangent line and the y-axis, let's call that point T. As we know, the focus should belongs to the equation of the line x = 0. So I found the intersection point between that line and the perpendicular bisector (mediatriz) of the triangle isosceles (that is formed by The intersection point between the tangent line in the point (a,b) and the y-axis, the point (a,b), and the Focus point of the Parabola), so i find the Focus point.
+    <script type="text/javascript">
+
+    /*
+    * Part of this code is based on:
+        * http://blogs.sitepoint.com/html5-canvas-draw-quadratic-curves/
+        * http://blogs.sitepoint.com/html5-canvas-draw-bezier-curves/
+    */
+
+    var canvas1, context1, points, myTransformation, style, drag = null, draggedPoint;
+
+    // TODO replace these points but those of the corresponding conic function (on-the-fly)
+    points = [{x:0, y:50}];
+
+    function init() {
+
+        myTransformation = function(p){return p}; //Identity transform
+
+        // default styles
+        style = {
+            curve:	{ width: 6, color: "#333" },
+            line:	{ width: 1, color: "#C00" },
+            point: { radius: 10, width: 2, color: "#900", fill: "rgba(200,200,200,0.5)", arc1: 0, arc2: 2 * Math.PI }
+        }
+
+        // line style defaults
+        context1.lineCap = "round";
+        context1.lineJoin = "round";
+
+        // Translate origin to center of canvas
+        context1.translate(canvas1.width/2,canvas1.height/2);
+		
+		// Flip y-axis, so it looks like in standard math axes
+		context1.scale(1,-1) // Reversed y-axis
+
+        drawCanvas();
+
+        
+    }
+
+
+    /**
+     Basic drawing methods
+     **/
+
+
+    // draw canvas
+    function drawCanvas() {
+        // Clear everything
+        context1.clearRect(-250, -250, canvas1.width, canvas1.height);  // Clear canvas
+
+        // Background grids
+        drawGrid(context1,canvas1.width, canvas1.height); // Draw background grid
+        drawParabola();
+        // Original points and vertices
+        drawCurve(context1, style, points); // Draw curve
+        drawVertices(context1, style, points); // Draw vertices as circles
+
+    }
+
+
+    // Draw a background grid
+    function drawGrid(myContext,bw,bh){
+        var delta = 50; // grid cell size
+
+        var half_width = bw/2;
+        var half_height = bh/2;
+        for (var x = -half_width; x <= half_width; x += delta) {
+            myContext.moveTo(x, -half_height);
+            myContext.lineTo(x, half_height);
+        }
+
+        for (var y = -half_height; y <= half_height; y += delta) {
+            myContext.moveTo(-half_width, y);
+            myContext.lineTo(half_width , y);
+        }
+
+        myContext.lineWidth = 1;
+        myContext.strokeStyle = "lightgray";
+        myContext.stroke();
+
+   
+
+    }
+
+    // Draws a polygonal curve connecting the points, after applying the given transformation
+    function drawCurve(ctx, style, points, transformation) {
+        // The transformation is optional. If none provided, use identity transform
+        if (transformation===undefined) {
+            transformation = function(p){return p}; //Identity transform
+        }
+
+        // Draw curve
+        ctx.lineWidth = style.curve.width;
+        ctx.strokeStyle = style.curve.color;
+        ctx.beginPath();
+        var firstPoint = transformation(points[0]);
+        var currentPoint;
+        ctx.moveTo(firstPoint.x, firstPoint.y);
+        for (var i = 0; i < points.length; i++) {
+            currentPoint =  transformation(points[i]);
+            ctx.lineTo(currentPoint.x, currentPoint.y);
+            ctx.moveTo(currentPoint.x, currentPoint.y);
+        }
+        ctx.stroke();
+    }
+
+    // Draw circles around vertices to facilitate drag and drop
+    function drawVertices (ctx, style, points) {
+        for (var i = 0; i < points.length; i++) {
+            var p = points[i];
+            ctx.lineWidth = style.point.width;
+            ctx.strokeStyle = style.point.color;
+            ctx.fillStyle = style.point.fill;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, style.point.radius, style.point.arc1, style.point.arc2, true);
+            ctx.fill();
+            ctx.stroke();
+        }
+    }
+
+
+    /**
+     * Start ("main method")
+     */
+
+    // Assign canvas and context variables
+    canvas1 = document.getElementById("canvas1");
+    context1 = canvas1.getContext("2d");
+
+
+
+    init();
+
+    function drawParabola() {
+        context1.beginPath();
+        context1.strokeStyle = "#393838";
+        for(var i=-500;i<=500;i++) {
+            // Current point
+            var x1 = i;        
+            var y1 = x1 * x1 / 200;
+            var y1p = x1 / 100; // derivitive
+
+            // Previous point
+            var x0 = i - 1;
+            var y0 = x0 * x0 / 200;
+            var y0p = x0 / 100; // derivitive
+
+            
+            var xi = (y0p * x0 - y0 - y1p * x1 + y1) / (y0p - y1p);
+            var yi = y0p * xi - y0p * x0 + y0;
+
+            if (i == -500) {
+              context1.moveTo(x1, y1);
+            }
+            else {
+              context1.quadraticCurveTo(xi, yi, x1, y1);
+            }
+        }
+        context1.stroke();
+    }
+
+    function doReset () {
+        myTransformation = function(p){return p}; //Identity transform
+        drawCanvas();
+    }
+
+    function CalculateReflection() {
+        var a = X.value;
+        var b = (a*a)/200; //Calculate the point of the vertical ray that hits in the Parabola
+        context1.beginPath();
+        context1.moveTo(a,500);
+        context1.lineTo(a,b);
+        context1.stroke();
+        //calculate the tangent line that goes through the point in the Parabola
+        var m = a / 100; //gradient
+        var x = 0;
+        var y = (m*(-a))+b;//y-a = m*(x-b), but we want to find the intersection point between the tangent line and the vertical line across the origin, so the x = 0.
+        var fy = (a*a)/(2*b+2*b); //as we know, the focus should belongs to the equation of the line x = 0. So I found the intersection point between that line and the perpendicular bisector (mediatriz) of the triangle isosceles (that is formed by The intersection point between the tangent line in the point (a,b) and the y-axis, the point (a,b), and the Focus point of the Parabola), so i find the Focus point.
+        context1.beginPath();
+        context1.moveTo(a,b);
+        context1.lineTo(0,fy);
+        context1.stroke();
+    }
+
+</script>
+</body>
+</html>
